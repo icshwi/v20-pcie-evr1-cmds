@@ -2,40 +2,40 @@
 #
 
 require mrfioc2, 2.2.0-rc2
-#require iocStats, 1856ef5
-#require autosave, 5.8.0
+require iocStats, ae5d083
+require autosave, 5.9.0
 
 epicsEnvSet("ENGINEER","Nicklas Holmberg")
 epicsEnvSet("LOCATION","Utgard")
 
-epicsEnvSet("SYS", "LabS-Utgard-VIP:")
-epicsEnvSet("IOC", "Labs-Utgard:CT-IOC-EVG1")
-epicsEnvSet("DEV1", "TS-EVG-1:")
-epicsEnvSet("EVG", "EVG-1")
+epicsEnvSet("IOC", "LabS-Utgard-VIP:TS")
+epicsEnvSet("DEV1", "EVG-1")
 
 epicsEnvSet("MainEvtCODE" "14")
 epicsEnvSet("HeartBeatEvtCODE"   "122")
 epicsEnvSet("ESSEvtClockRate"  "88.0525")
 
 mrmEvgSetupPCI($(DEV1), "6:0d.0")
-dbLoadRecords("evg-cpci-230-ess.db",  "SYS=$(IOC), D=$(DEV1), EVG=$(EVG), FEVT=$(ESSEvtClockRate), FRF=$(ESSEvtClockRate), FDIV=1")
+dbLoadRecords("evg-cpci-230-ess.db",  "SYS=$(IOC), D=$(DEV1), EVG=$(DEV1), FEVT=$(ESSEvtClockRate), FRF=$(ESSEvtClockRate), FDIV=1, PINITSEQ=0")
 
 # iocStats
-dbLoadRecords("iocAdminSoft.db", "IOC=$(IOC)-IocStats")
+dbLoadRecords("iocAdminSoft.db", "IOC=$(IOC)-$(DEV1)-IocStats")
 
 
 # Auto save/restore
 
 # Directory should be existent before IOC runing
 #epicsEnvSet("AUTOSAVE", "/home/timinguser/autosave")
-epicsEnvSet("AUTOSAVE", "/epics/autosave")
+epicsEnvSet("AUTOSAVE_ROOT", "/epics/iocs/autosave")
+epicsEnvSet("AUTOSAVE", "$(AUTOSAVE_ROOT)/$(IOC)-$(DEV1)")
 
 #var save_restoreDebug 1
 
 dbLoadRecords("save_restoreStatus.db", "P=$(IOC):Autosave")
-save_restoreSet_status_prefix("$(IOC):Autosave")
-set_savefile_path("${AUTOSAVE}/$(IOC)")
-set_requestfile_path("${AUTOSAVE}")
+save_restoreSet_status_prefix("$(IOC)-$(DEV1):Autosave")
+system("mkdir -p -m 0755 $(AUTOSAVE)")
+set_savefile_path("$(AUTOSAVE)")
+set_requestfile_path("$(AUTOSAVE)")
 set_pass0_restoreFile("mrf_settings.sav")
 set_pass0_restoreFile("mrf_values.sav")
 set_pass1_restoreFile("mrf_values.sav")
@@ -48,9 +48,9 @@ iocInit()
 #dbl > "${IOC}_PVs.list"
 
 
-makeAutosaveFileFromDbInfo("${AUTOSAVE}/mrf_settings.req",  "autosaveFields_pass0")
-makeAutosaveFileFromDbInfo("${AUTOSAVE}/mrf_values.req",    "autosaveFields")
-makeAutosaveFileFromDbInfo("${AUTOSAVE}/mrf_waveforms.req", "autosaveFields_pass1")
+makeAutosaveFileFromDbInfo("$(AUTOSAVE)/mrf_settings.req",  "autosaveFields_pass0")
+makeAutosaveFileFromDbInfo("$(AUTOSAVE)/mrf_values.req",    "autosaveFields")
+makeAutosaveFileFromDbInfo("$(AUTOSAVE)/mrf_waveforms.req", "autosaveFields_pass1")
 
 create_monitor_set("mrf_settings.req",   5 , "")
 create_monitor_set("mrf_values.req",     5 , "")

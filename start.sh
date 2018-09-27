@@ -1,9 +1,6 @@
 #!/bin/bash
-#export VIP_SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null && pwd )"
-#source "$VIP_SCRIPT_DIR/../../env.sh"
-#source "$VIP_SCRIPT_DIR/env.sh"
-#modprobe uio
-#modprobe parport
-#insmod $VIP_SCRIPT_DIR/mrf.ko
-#iocsh.bash "$VIP_SCRIPT_DIR/st.utgard-cpci-evg1.cmd" 
-iocsh.bash "st.utgard-cpci-evg1.cmd" 
+export IOC_EXEC_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null && pwd )"
+export E3_BIN_DIR="/epics/base-3.15.5/require/3.0.0/bin"
+export IOC_ST_CMD=st.labs-utgard-evg1.cmd
+source "$E3_BIN_DIR/setE3Env.bash"
+$E3_BIN_DIR/iocsh.bash $IOC_EXEC_DIR/$IOC_ST_CMD &

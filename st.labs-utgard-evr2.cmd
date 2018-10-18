@@ -63,6 +63,13 @@ dbpf $(SYS)-$(DEVICE):SoftSeq0-Load-Cmd 1
 # Enable sequencer
 dbpf $(SYS)-$(DEVICE):SoftSeq0-Enable-Cmd 1
 
+dbpf $(CHIC_SYS)$(CHOP_DRV)01:Freq-SP 28
+dbpf $(CHIC_SYS)$(CHOP_DRV)02:Freq-SP 28
+dbpf $(CHIC_SYS)$(CHOP_DRV)03:Tube-Pos-Delay 10
+dbpf $(CHIC_SYS)$(CHOP_DRV)04:Tube-Pos-Delay 20
+# Check that this command is required.
+dbpf $(SYS)-$(DEVICE):RF-Freq 88052500
+
 # Hints for setting input PVs from client
 #caput -a $(SYS)-$(DEVICE):SoftSeq0-EvtCode-SP 2 17 18
 #caput -a $(SYS)-$(DEVICE):SoftSeq0-Timestamp-SP 2 0 12578845
